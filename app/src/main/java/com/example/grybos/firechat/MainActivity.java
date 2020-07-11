@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE); //Pojawia się progressbar
 
-        mAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() { //Logowanie
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
@@ -115,14 +115,18 @@ public class MainActivity extends AppCompatActivity {
 
                 if (task.isSuccessful()){
 
-                    Intent intent = new Intent(MainActivity.this, ChatListActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    //Pomyślne logowanie
+
+                    Intent intent = new Intent(MainActivity.this, ChatListActivity.class); //Nowe activity
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
                     startActivity(intent);
 
                 }
                 else {
 
-                    Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    //Błąd
+
+                    Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show(); //Komunikat zależny od błędu
 
                 }
 

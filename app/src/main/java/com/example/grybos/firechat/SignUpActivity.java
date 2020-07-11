@@ -27,7 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class SignUpActivity extends AppCompatActivity {
 
     //zmienne
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth; //Obiekt do logowania
     private ProgressBar progressBar;
 
     //widgety
@@ -51,7 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
         signup_switch = findViewById(R.id.login_switch);
         progressBar = findViewById(R.id.progress_bar);
 
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance(); //Inicjalizacja obiektu do logowania
 
         sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,8 +122,8 @@ public class SignUpActivity extends AppCompatActivity {
                     //Rejestracja przebiega pomyślnie
 
                     progressBar.setVisibility(View.GONE); //Znika progressbar
-                    Intent intent = new Intent(SignUpActivity.this, ChatListActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Intent intent = new Intent(SignUpActivity.this, ChatListActivity.class); //Do nowego activity
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
                     startActivity(intent);
                     Toast.makeText(SignUpActivity.this, "Zarejestrowano!!!", Toast.LENGTH_LONG).show();
 
