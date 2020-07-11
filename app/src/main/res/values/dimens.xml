@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="logo_imageView_height">260dp</dimen>
+    <dimen name="margin_left">20dp</dimen>
+    <dimen name="margin_top">100dp</dimen>
+    <dimen name="margin_right">20dp</dimen>
+    <dimen name="padding">15dp</dimen>
+    <dimen name="text_size">16sp</dimen>
+
+</resources>

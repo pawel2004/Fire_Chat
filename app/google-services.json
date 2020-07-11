@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1086129793088",
+    "firebase_url": "https://fire-chat-1ce3d.firebaseio.com",
+    "project_id": "fire-chat-1ce3d",
+    "storage_bucket": "fire-chat-1ce3d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1086129793088:android:0e3ff1e5dbec592eeb17a5",
+        "android_client_info": {
+          "package_name": "com.example.grybos.firechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1086129793088-gobp2n6ucek91lpl210drvgsduqh7872.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.grybos.firechat",
+            "certificate_hash": "8b30f13b111882b9372fbf933969605474eae25b"
+          }
+        },
+        {
+          "client_id": "1086129793088-r334blbrc2dc6u86dmmntbk1mbkl3kcn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqirjzOMAFNvhADzAWns7XLXJubKKozP4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1086129793088-r334blbrc2dc6u86dmmntbk1mbkl3kcn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

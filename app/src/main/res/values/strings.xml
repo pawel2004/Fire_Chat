@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Fire Chat</string>
+    <string name="username_hint">email</string>
+    <string name="password_hint">password</string>
+    <string name="button_login">Log in</string>
+    <string name="button_signup">Sign up</string>
+    <string name="login_text">Nie masz konta? Zarejestruj się!</string>
+    <string name="signup_text">Masz już konto? Zaloguj się!</string>
+</resources>
