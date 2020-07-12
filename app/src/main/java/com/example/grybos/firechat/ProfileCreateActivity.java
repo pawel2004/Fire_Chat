@@ -40,9 +40,9 @@ import java.nio.file.attribute.UserPrincipalLookupService;
 public class ProfileCreateActivity extends AppCompatActivity {
 
     //zmienne
-    private Uri uriProfileImage;
-    private String profileImageUrl;
-    private FirebaseAuth mAuth;
+    private Uri uriProfileImage; //Ta zmienna reprezentuje zdjęcie profilowe
+    private String profileImageUrl; //Ścieżka do zdjęcia
+    private FirebaseAuth mAuth; //Obiekt do aktualizacji danych użytkownika
 
     //widgety
     private CircularImageView profile_image;
@@ -62,7 +62,7 @@ public class ProfileCreateActivity extends AppCompatActivity {
         save = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progress_bar);
 
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance(); //Inicjalizacja menadżera użytkowników
 
         profile_image.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -87,7 +87,7 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
     private void saveUserInfo() {
 
-        String displayname = name.getText().toString();
+        String displayname = name.getText().toString(); //Pobieram nazwę
 
         if (displayname.isEmpty()){
 
@@ -97,15 +97,15 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
         }
 
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = mAuth.getCurrentUser(); //Tworzenie obiektu użytkownika
 
         if (user != null && profileImageUrl != null){
 
             UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
                     .setDisplayName(displayname)
-                    .setPhotoUri(Uri.parse(profileImageUrl)).build();
+                    .setPhotoUri(Uri.parse(profileImageUrl)).build(); //Dodawanie informacji
 
-            user.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+            user.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() { //Metoda zapisująca dane na profilu
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
 
@@ -137,7 +137,7 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
     }
 
-    private void showImageChooser(){
+    private void showImageChooser(){ //Otiwiera galerię i pobiera zdjęcie
 
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -152,11 +152,11 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
         if (requestCode == 200 && resultCode == RESULT_OK && data != null && data.getData() != null){
 
-            uriProfileImage = data.getData();
+            uriProfileImage = data.getData(); //Zdjęcie ląduje w tym obiekcie
 
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriProfileImage);
-                profile_image.setImageBitmap(bitmap);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriProfileImage); //Ustawiam zdjęcie w ImageView
+                profile_image.setImageBitmap(bitmap); //-||-
                 uploadImageToFirebaseStorage();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -166,20 +166,20 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
     }
 
-    private void uploadImageToFirebaseStorage() {
+    private void uploadImageToFirebaseStorage() { //Ładowanie zdjęcia do magazynu danych
 
-        StorageReference profileImageRef = FirebaseStorage.getInstance().getReference("profilepics/" + System.currentTimeMillis() + ".jpg");
+        StorageReference profileImageRef = FirebaseStorage.getInstance().getReference("profilepics/" + System.currentTimeMillis() + ".jpg"); //Tworzenie szblonu zdjęcia
 
         if (uriProfileImage != null){
 
             progressBar.setVisibility(View.VISIBLE);
 
-            profileImageRef.putFile(uriProfileImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            profileImageRef.putFile(uriProfileImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() { //Dajemy zdjęcie do tego szablonu
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     progressBar.setVisibility(View.GONE);
 
-                    profileImageUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                    profileImageUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString(); //Pobieramy ścieżkę do zdjęcia
 
                     Log.d("xxx", profileImageUrl);
 
