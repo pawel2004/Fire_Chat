@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,6 +64,8 @@ public class ProfileCreateActivity extends AppCompatActivity {
         save = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progress_bar);
 
+        Bundle bundle = getIntent().getExtras();
+
         mAuth = FirebaseAuth.getInstance(); //Inicjalizacja menadżera użytkowników
 
         profile_image.setOnLongClickListener(new View.OnLongClickListener() {
@@ -82,6 +86,26 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
             }
         });
+
+        if (bundle != null){
+
+            if (bundle.getInt("key") == 1){
+
+                loadUserInformation();
+
+            }
+
+        }
+
+    }
+
+    private void loadUserInformation(){
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        Glide.with(this).load(user.getPhotoUrl().toString()).into(profile_image);
+
+        name.setText(user.getDisplayName());
 
     }
 
@@ -112,6 +136,10 @@ public class ProfileCreateActivity extends AppCompatActivity {
                     if (task.isSuccessful()){
 
                         Toast.makeText(ProfileCreateActivity.this, "Profil zmieniony!", Toast.LENGTH_LONG).show();
+
+                        Intent intent = new Intent(ProfileCreateActivity.this, MainActivity.class); //Do nowego activity
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
+                        startActivity(intent);
 
                     }
 
@@ -168,32 +196,33 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
     private void uploadImageToFirebaseStorage() { //Ładowanie zdjęcia do magazynu danych
 
-        StorageReference profileImageRef = FirebaseStorage.getInstance().getReference("profilepics/" + System.currentTimeMillis() + ".jpg"); //Tworzenie szblonu zdjęcia
+        final StorageReference profileImageRef = FirebaseStorage.getInstance().getReference("profilepics/" + System.currentTimeMillis() + ".jpg"); //Tworzenie szblonu zdjęcia
 
-        if (uriProfileImage != null){
+        if (uriProfileImage != null) {
 
-            progressBar.setVisibility(View.VISIBLE);
+            profileImageRef.putFile(uriProfileImage)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // profileImageUrl taskSnapshot.getDownloadUrl().toString(); //this is depreciated
 
-            profileImageRef.putFile(uriProfileImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() { //Dajemy zdjęcie do tego szablonu
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    progressBar.setVisibility(View.GONE);
-
-                    profileImageUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString(); //Pobieramy ścieżkę do zdjęcia
-
-                    Log.d("xxx", profileImageUrl);
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    progressBar.setVisibility(View.GONE);
-
-                    Toast.makeText(ProfileCreateActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-
-                }
-            });
-
+                            //this is the new way to do it
+                            profileImageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    profileImageUrl=task.getResult().toString();
+                                    Log.i("URL",profileImageUrl);
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(ProfileCreateActivity.this, "aaa "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 }

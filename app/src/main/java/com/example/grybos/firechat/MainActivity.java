@@ -68,6 +68,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (mAuth.getCurrentUser() != null){
+
+            Intent intent = new Intent(MainActivity.this, ChatListActivity.class); //Nowe activity
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
+            startActivity(intent);
+
+        }
+
+    }
+
     private void userLogin(){
 
         String username = Edit_text_username.getText().toString();
