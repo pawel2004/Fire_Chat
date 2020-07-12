@@ -39,15 +39,26 @@
         android:id="@+id/name"
         android:hint="@string/name_hint"
         android:textColorHint="@color/white"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:textColor="@color/white"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
         android:text="@string/save_button_text"
+        android:textColor="@color/white"
         android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
         android:id="@+id/button_save"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/button_save"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:id="@+id/progress_bar"/>
 
 </RelativeLayout>
