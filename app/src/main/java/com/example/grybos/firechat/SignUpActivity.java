@@ -122,7 +122,7 @@ public class SignUpActivity extends AppCompatActivity {
                     //Rejestracja przebiega pomyślnie
 
                     progressBar.setVisibility(View.GONE); //Znika progressbar
-                    Intent intent = new Intent(SignUpActivity.this, ChatListActivity.class); //Do nowego activity
+                    Intent intent = new Intent(SignUpActivity.this, ProfileCreateActivity.class); //Do nowego activity
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
                     startActivity(intent);
                     Toast.makeText(SignUpActivity.this, "Zarejestrowano!!!", Toast.LENGTH_LONG).show();
