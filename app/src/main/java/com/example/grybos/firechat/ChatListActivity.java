@@ -71,7 +71,9 @@ public class ChatListActivity extends AppCompatActivity {
         }
         else {
 
-            startActivity(new Intent(ChatListActivity.this, ProfileCreateActivity.class));
+            Intent intent = new Intent(ChatListActivity.this, ProfileCreateActivity.class); //Do nowego activity
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
+            startActivity(intent);
 
         }
 

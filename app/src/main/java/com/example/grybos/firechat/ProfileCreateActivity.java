@@ -99,7 +99,7 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
     }
 
-    private void loadUserInformation(){
+    private void loadUserInformation(){ //ładuje zdjęcie i nazwę
 
         FirebaseUser user = mAuth.getCurrentUser();
 
@@ -149,23 +149,64 @@ public class ProfileCreateActivity extends AppCompatActivity {
         }
         else if (profileImageUrl == null){
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(ProfileCreateActivity.this);
-            alert.setTitle("Musisz załadować jakieś zdjęcie!");
-            alert.setCancelable(false);
-            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+            if (user.getPhotoUrl() != null){
 
+                profileImageUrl = user.getPhotoUrl().toString();
 
+                UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(displayname)
+                        .setPhotoUri(Uri.parse(profileImageUrl)).build(); //Dodawanie informacji
 
-                }
-            }).show();
+                user.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() { //Metoda zapisująca dane na profilu
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (task.isSuccessful()){
+
+                            Toast.makeText(ProfileCreateActivity.this, "Profil zmieniony!", Toast.LENGTH_LONG).show();
+
+                            Intent intent = new Intent(ProfileCreateActivity.this, MainActivity.class); //Do nowego activity
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
+                            startActivity(intent);
+
+                        }
+
+                    }
+                });
+
+            }
+            else {
+
+                profileImageUrl = "https://firebasestorage.googleapis.com/v0/b/fire-chat-1ce3d.appspot.com/o/default_profile.jpg?alt=media&token=1c402dfa-18b2-40d6-8756-0639fe228616";
+
+                UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(displayname)
+                        .setPhotoUri(Uri.parse(profileImageUrl)).build(); //Dodawanie informacji
+
+                user.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() { //Metoda zapisująca dane na profilu
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (task.isSuccessful()){
+
+                            Toast.makeText(ProfileCreateActivity.this, "Profil zmieniony!", Toast.LENGTH_LONG).show();
+
+                            Intent intent = new Intent(ProfileCreateActivity.this, MainActivity.class); //Do nowego activity
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
+                            startActivity(intent);
+
+                        }
+
+                    }
+                });
+
+            }
 
         }
 
     }
 
-    private void showImageChooser(){ //Otiwiera galerię i pobiera zdjęcie
+    private void showImageChooser(){ //Otwiera galerię i pobiera zdjęcie
 
         Intent intent = new Intent();
         intent.setType("image/*");
