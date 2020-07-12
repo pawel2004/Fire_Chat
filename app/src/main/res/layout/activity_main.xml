@@ -15,10 +15,9 @@
         android:background="@color/colorAccent"
         android:id="@+id/icon"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_below="@+id/icon"
         android:background="@color/colorPrimaryDark"
         android:layout_marginEnd="@dimen/margin_right"
@@ -40,7 +39,8 @@
             android:hint="@string/password_hint"
             android:textColorHint="@color/white"
             android:id="@+id/password"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:layout_below="@id/username"/>
 
         <Button
             android:layout_width="match_parent"
@@ -48,7 +48,8 @@
             android:text="@string/button_login"
             android:textColor="@color/white"
             android:background="@color/colorPrimary"
-            android:id="@+id/button_login"/>
+            android:id="@+id/button_login"
+            android:layout_below="@id/password"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -58,15 +59,18 @@
             android:gravity="center"
             android:padding="@dimen/padding"
             android:textSize="@dimen/text_size"
-            android:id="@+id/signup_switch"/>
+            android:id="@+id/signup_switch"
+            android:layout_below="@id/button_login"/>
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:id="@+id/progress_bar"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:layout_below="@id/signup_switch"
+            android:layout_centerHorizontal="true"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
