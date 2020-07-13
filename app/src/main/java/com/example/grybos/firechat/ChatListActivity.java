@@ -49,6 +49,18 @@ public class ChatListActivity extends AppCompatActivity {
             }
         });
 
+        log_out.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mAuth.signOut(); //Wyloguj
+                Intent intent = new Intent(ChatListActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+
+            }
+        });
+
     }
 
     private void loadUserInformation(){

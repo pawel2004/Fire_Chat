@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -51,6 +52,7 @@ public class ProfileCreateActivity extends AppCompatActivity {
     private EditText name;
     private Button save;
     private ProgressBar progressBar;
+    private TextView email_ver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class ProfileCreateActivity extends AppCompatActivity {
         name = findViewById(R.id.name);
         save = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progress_bar);
+        email_ver = findViewById(R.id.email_ver);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -106,6 +109,42 @@ public class ProfileCreateActivity extends AppCompatActivity {
         Glide.with(this).load(user.getPhotoUrl().toString()).into(profile_image);
 
         name.setText(user.getDisplayName());
+
+        if (user.isEmailVerified()){ //Sprawdzam, czy użytkownik ma zweryfikowany email
+
+            email_ver.setText("Email jest zweryfikowany");
+
+        }
+        else {
+
+            email_ver.setText("Email jest niezweryfikowany");
+
+        }
+
+    }
+
+    @Override
+    protected void onStart() { //Przy starcie
+        super.onStart();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user != null){
+
+            if (!user.isEmailVerified()){ //Jeżeli użytkownik nie ma zweryfikowanego emaila
+
+                user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() { //Wyślij email
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        Toast.makeText(ProfileCreateActivity.this, "Verification email sent", Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
+            }
+
+        }
 
     }
 

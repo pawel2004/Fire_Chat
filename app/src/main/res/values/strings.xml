@@ -9,4 +9,5 @@
     <string name="profile_image_text">Przytrzymaj zdjęcie, aby je zmienić!</string>
     <string name="save_button_text">Zapisz</string>
     <string name="name_hint">Wprowadź nazwę użytkownika</string>
+    <string name="verification">Email jest niezweryfikowany</string>
 </resources>
