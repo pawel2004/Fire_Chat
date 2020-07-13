@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1086129793088-j5vhd6d5gr5hnkar0m6jk1qcreip3ann.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.grybos.firechat",
+            "certificate_hash": "8c1cfd5f81241e9b2e5dac2c0f4895cd2f79584e"
+          }
+        },
+        {
           "client_id": "1086129793088-gobp2n6ucek91lpl210drvgsduqh7872.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
