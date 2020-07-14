@@ -17,5 +17,6 @@
     <dimen name="top_bar_height">50dp</dimen>
     <dimen name="padding_start">10dp</dimen>
     <dimen name="text_size2">12sp</dimen>
+    <dimen name="text_size3">22sp</dimen>
 
 </resources>

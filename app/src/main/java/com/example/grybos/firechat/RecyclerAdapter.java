@@ -18,14 +18,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
-        public CircularImageView mImageView;
         public TextView mTextView1;
         public TextView mTextView2;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mImageView = itemView.findViewById(R.id.chatroomPicture);
             mTextView1 = itemView.findViewById(R.id.chat_name);
             mTextView2 = itemView.findViewById(R.id.last_message);
 
@@ -51,7 +49,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         Item currentItem = mItems.get(position);
 
-        holder.mImageView.setImageResource(currentItem.getmImageResource());
         holder.mTextView1.setText(currentItem.getChat_name());
         holder.mTextView2.setText(currentItem.getLast_message());
 

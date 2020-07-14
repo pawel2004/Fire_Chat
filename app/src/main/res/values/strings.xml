@@ -12,4 +12,7 @@
     <string name="verification">Email jest niezweryfikowany</string>
     <string name="nazwa_chatu">Nazwa Chatu</string>
     <string name="u_ytkownik_ostatnia_wiadomo">Użytkownik: Ostatnia wiadomość</string>
+    <string name="bottom_sheet_title">Podaj nazwę nowego chatu:</string>
+    <string name="nazwa_czatu">Nazwa czatu</string>
+    <string name="dodaj">Dodaj</string>
 </resources>

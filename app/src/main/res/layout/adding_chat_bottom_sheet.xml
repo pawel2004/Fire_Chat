@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:padding="@dimen/padding">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title"
+        android:layout_gravity="center"
+        android:text="@string/bottom_sheet_title"
+        android:textSize="@dimen/text_size3"
+        android:textStyle="bold"
+        android:textColor="@color/white"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_marginEnd="@dimen/margin_right"
+        android:hint="@string/nazwa_czatu"
+        android:textColorHint="@color/white"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:id="@+id/edit_text"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/dodaj"
+        android:textColor="@color/white"
+        android:background="@color/colorAccent"
+        android:textSize="@dimen/text_size"
+        android:id="@+id/button"/>
+
+</LinearLayout>

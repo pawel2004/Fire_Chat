@@ -1,23 +1,15 @@
 package com.example.grybos.firechat;
 
+import java.util.Map;
+
 public class Item {
 
-    private int mImageResource;
     private String chat_name;
     private String last_message;
 
-    public Item(int mImageResource, String chat_name, String last_message) {
-        this.mImageResource = mImageResource;
+    public Item(String chat_name, String last_message) {
         this.chat_name = chat_name;
         this.last_message = last_message;
-    }
-
-    public int getmImageResource() {
-        return mImageResource;
-    }
-
-    public void setmImageResource(int mImageResource) {
-        this.mImageResource = mImageResource;
     }
 
     public String getChat_name() {
