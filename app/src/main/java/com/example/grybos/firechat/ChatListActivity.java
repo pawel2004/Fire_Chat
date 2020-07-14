@@ -1,6 +1,8 @@
 package com.example.grybos.firechat;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.media.Image;
@@ -14,15 +16,20 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class ChatListActivity extends AppCompatActivity {
 
     //zmienne
     private FirebaseAuth mAuth;
+    private ArrayList<Item> items = new ArrayList<>();
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     //widgety
     private CircularImageView profile_picture;
     private ImageView log_out;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,26 @@ public class ChatListActivity extends AppCompatActivity {
         log_out = findViewById(R.id.log_out);
 
         loadUserInformation();
+
+        items.add(new Item(R.drawable.ic_icon, "Chat1", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat2", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat3", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat4", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat5", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat6", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat7", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat8", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat9", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat10", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat11", "Paweł: Cześć!"));
+        items.add(new Item(R.drawable.ic_icon, "Chat12", "Paweł: Cześć!"));
+
+        mRecyclerView = findViewById(R.id.recycler);
+        mLayoutManager = new LinearLayoutManager(this);
+        mAdapter = new RecyclerAdapter(items);
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
 
         profile_picture.setOnClickListener(new View.OnClickListener() {
             @Override

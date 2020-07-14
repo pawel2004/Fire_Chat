@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="@dimen/logo_imageView3_width"
+            android:layout_height="@dimen/logo_imageView3_height"
+            android:id="@+id/chatroomPicture"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/nazwa_chatu"
+            android:textSize="@dimen/text_size"
+            android:textColor="@color/black"
+            android:layout_toEndOf="@id/chatroomPicture"
+            android:paddingStart="@dimen/padding_start"
+            tools:ignore="RtlSymmetry"
+            android:id="@+id/chat_name"
+            android:layout_alignTop="@id/chatroomPicture"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/last_message"
+            android:layout_toEndOf="@id/chatroomPicture"
+            android:layout_below="@id/chat_name"
+            android:paddingStart="@dimen/padding_start"
+            tools:ignore="RtlSymmetry"
+            android:textSize="@dimen/text_size2"
+            android:text="@string/u_ytkownik_ostatnia_wiadomo"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

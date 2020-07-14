@@ -10,4 +10,6 @@
     <string name="save_button_text">Zapisz</string>
     <string name="name_hint">Wprowadź nazwę użytkownika</string>
     <string name="verification">Email jest niezweryfikowany</string>
+    <string name="nazwa_chatu">Nazwa Chatu</string>
+    <string name="u_ytkownik_ostatnia_wiadomo">Użytkownik: Ostatnia wiadomość</string>
 </resources>
