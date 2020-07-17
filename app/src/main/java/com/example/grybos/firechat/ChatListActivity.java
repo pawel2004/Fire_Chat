@@ -127,22 +127,6 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
 
     private void generateRecyclerView(){
 
-        chatRoomList.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-                Log.w("xxx", "Failed to read value.", error.toException());
-
-            }
-        });
-
         mRecyclerView = findViewById(R.id.recycler);
         mLayoutManager = new LinearLayoutManager(this);
         mAdapter = new RecyclerAdapter(items);
@@ -155,7 +139,7 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
     @Override
     public void onButtonClicked(String text) {
 
-        chatRoomList.push().setValue(text);
+        chatRoomList.push().setValue(new Item(text, null));
 
         generateRecyclerView();
 

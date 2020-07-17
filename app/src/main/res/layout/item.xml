@@ -12,7 +12,8 @@
             android:layout_width="@dimen/logo_imageView3_width"
             android:layout_height="@dimen/logo_imageView3_height"
             android:id="@+id/chatroomPicture"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:src="@mipmap/ic_icon"/>
 
         <TextView
             android:layout_width="match_parent"

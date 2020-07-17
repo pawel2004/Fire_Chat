@@ -7,6 +7,10 @@ public class Item {
     private String chat_name;
     private String last_message;
 
+    public Item(){
+
+    }
+
     public Item(String chat_name, String last_message) {
         this.chat_name = chat_name;
         this.last_message = last_message;
