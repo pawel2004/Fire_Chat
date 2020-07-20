@@ -1,6 +1,7 @@
 package com.example.grybos.firechat;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,7 +10,10 @@ import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -27,7 +31,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class ChatListActivity extends AppCompatActivity implements AddingChatBottomSheetDialog.BottomSheetListener {
+public class ChatListActivity extends AppCompatActivity implements AddingChatBottomSheetDialog.BottomSheetListener, EditingChatBottomSheetDialog.EditBottomSheetListener {
 
     //zmienne
     private FirebaseAuth mAuth;
@@ -184,6 +188,16 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
             }
         });
 
+        mAdapter.setOnitemLongClickListener(new RecyclerAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(int position) {
+
+                EditingChatBottomSheetDialog bottomSheet = new EditingChatBottomSheetDialog(items.get(position).getChat_name(), items.get(position).getId(), items.get(position).getImage_resource());
+                bottomSheet.show(getSupportFragmentManager(), "edycja");
+
+            }
+        });
+
     }
 
     @Override
@@ -195,4 +209,65 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
 
     }
 
+    @Override
+    public void onViewClicked(String text, final String id, final String image_resource) {
+
+        final DatabaseReference drRef = chatRoomList.child(id);
+
+        if (text.equals("0")){
+
+            drRef.removeValue();
+
+        }else {
+
+            final AlertDialog.Builder alert = new AlertDialog.Builder(ChatListActivity.this);
+
+            LayoutInflater inflater = getLayoutInflater();
+
+            final View dialogView = inflater.inflate(R.layout.edit_room_alert, null);
+            alert.setView(dialogView);
+
+            final EditText editTextName = dialogView.findViewById(R.id.name);
+            final Button buttonOk = dialogView.findViewById(R.id.button_ok);
+            final Button buttonAnuluj = dialogView.findViewById(R.id.button_anuluj);
+
+            final AlertDialog alertDialog = alert.create();
+            alertDialog.show();
+
+            buttonOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String name = editTextName.getText().toString();
+
+                    if (!name.isEmpty()){
+
+                        Item item = new Item(id, image_resource, name);
+
+                        drRef.setValue(item);
+
+                        alertDialog.dismiss();
+
+                    }else {
+
+                        editTextName.setError("Musisz wpisać jakąś nazwę!");
+                        editTextName.requestFocus();
+
+                    }
+
+                }
+            });
+
+            buttonAnuluj.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    alertDialog.dismiss();
+
+                }
+            });
+
+        }
+
+    }
 }

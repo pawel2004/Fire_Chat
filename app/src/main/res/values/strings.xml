@@ -16,4 +16,10 @@
     <string name="nazwa_czatu">Nazwa czatu</string>
     <string name="dodaj">Dodaj</string>
     <string name="edytowany_chat">Edytowany chat: </string>
+    <string name="delete_room">Usuń chat</string>
+    <string name="edit_chat">Edytuj chat</string>
+    <string name="zmiana_nazwy">Zmiana nazwy:</string>
+    <string name="new_name">Podaj nową nazwę</string>
+    <string name="anuluj">Anuluj</string>
+    <string name="ok">Ok</string>
 </resources>
