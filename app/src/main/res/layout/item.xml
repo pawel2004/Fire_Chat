@@ -2,7 +2,14 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="20dp"
+    android:layout_marginStart="@dimen/margin_top_recycler"
+    android:layout_marginEnd="@dimen/margin_top_recycler"
+    android:focusable="true"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -25,19 +32,8 @@
             android:paddingStart="@dimen/padding_start"
             tools:ignore="RtlSymmetry"
             android:id="@+id/chat_name"
-            android:layout_alignTop="@id/chatroomPicture"
+            android:layout_centerVertical="true"
             android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/last_message"
-            android:layout_toEndOf="@id/chatroomPicture"
-            android:layout_below="@id/chat_name"
-            android:paddingStart="@dimen/padding_start"
-            tools:ignore="RtlSymmetry"
-            android:textSize="@dimen/text_size2"
-            android:text="@string/u_ytkownik_ostatnia_wiadomo"/>
 
     </RelativeLayout>
 

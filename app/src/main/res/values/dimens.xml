@@ -18,5 +18,6 @@
     <dimen name="padding_start">10dp</dimen>
     <dimen name="text_size2">12sp</dimen>
     <dimen name="text_size3">22sp</dimen>
+    <dimen name="margin_top_recycler">10dp</dimen>
 
 </resources>

@@ -33,7 +33,7 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private ArrayList<Item> items = new ArrayList<>();
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private DatabaseReference chatRoomList;
 
@@ -42,6 +42,11 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
     private ImageView log_out;
     private RecyclerView mRecyclerView;
     private FloatingActionButton fab;
+
+    //static
+    public static final String RoomId = "RoomId";
+    public static final String RoomImage = "RoomImage";
+    public static final String RoomName = "RoomName";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +57,7 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
 
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        chatRoomList = database.getReference();
+        chatRoomList = database.getReference("Rooms");
 
         profile_picture = findViewById(R.id.profile_picture);
         log_out = findViewById(R.id.log_out);
@@ -97,6 +102,36 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        chatRoomList.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                items.clear();
+
+                for (DataSnapshot itemSnapshot : snapshot.getChildren()){
+
+                    Item item = itemSnapshot.getValue(Item.class);
+
+                    items.add(item);
+
+                }
+
+                generateRecyclerView();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
     private void loadUserInformation(){
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -129,19 +164,34 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
 
         mRecyclerView = findViewById(R.id.recycler);
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new RecyclerAdapter(items);
+        mAdapter = new RecyclerAdapter(this, items);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+        mAdapter.setOnitemClickListener(new RecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+                Item item = items.get(position);
+
+                Intent intent = new Intent(ChatListActivity.this, ChatRoomActivity.class);
+                intent.putExtra(RoomId, item.getId());
+                intent.putExtra(RoomImage, item.getImage_resource());
+                intent.putExtra(RoomName, item.getChat_name());
+                startActivity(intent);
+
+            }
+        });
 
     }
 
     @Override
     public void onButtonClicked(String text) {
 
-        chatRoomList.push().setValue(new Item(text, null));
-
-        generateRecyclerView();
+        String id = chatRoomList.push().getKey();
+        DatabaseReference tempRef = chatRoomList.child(id);
+        tempRef.setValue(new Item(id, "https://firebasestorage.googleapis.com/v0/b/fire-chat-1ce3d.appspot.com/o/ic_icon.png?alt=media&token=ff5e63a8-5f3a-4902-8c3a-feb3bf87517f", text));
 
     }
 
