@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -153,25 +154,39 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    private void isNetworkConnected(){ //Sprawdzam połączenie z Internetem
+    private void isNetworkConnected(){
 
-        if (!Networking.checkConnection(SignUpActivity.this)){
+        if (!Networking.checkConnection(this)){
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(SignUpActivity.this);
-            alert.setTitle("Ta aplikacja wymaga połączenia z Internetem!");
-            alert.setMessage("Włącz Wi-Fi i spróbuj ponownie");
-            alert.setCancelable(false);
-            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            LayoutInflater inflater = getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.info_alert, null);
+
+            final TextView textViewTitle = dialogView.findViewById(R.id.title);
+            final TextView textViewMessage = dialogView.findViewById(R.id.message);
+            final Button button_ok = dialogView.findViewById(R.id.button_ok);
+            final Button button_anuluj = dialogView.findViewById(R.id.button_anuluj);
+
+            button_anuluj.setVisibility(View.GONE);
+
+            textViewTitle.setText("Problem z Internetem!");
+            textViewMessage.setText("Nie masz połączenia! Włącz Internet i spróbuj ponownie!");
+
+            alert.setView(dialogView);
+            final AlertDialog alertDialog = alert.create();
+            alertDialog.show();
+
+            button_ok.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(View v) {
 
                     finish();
 
                 }
             });
-            alert.show();
 
         }
 
     }
+
 }

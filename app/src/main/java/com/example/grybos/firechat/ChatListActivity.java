@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -46,6 +48,7 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
     private ImageView log_out;
     private RecyclerView mRecyclerView;
     private FloatingActionButton fab;
+    private ProgressBar progressBar;
 
     //static
     public static final String RoomId = "RoomId";
@@ -57,6 +60,8 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_list);
 
+        isNetworkConnected();
+
         getSupportActionBar().hide();
 
         mAuth = FirebaseAuth.getInstance();
@@ -66,6 +71,7 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
         profile_picture = findViewById(R.id.profile_picture);
         log_out = findViewById(R.id.log_out);
         fab = findViewById(R.id.fab);
+        progressBar = findViewById(R.id.progress_bar);
 
         loadUserInformation();
 
@@ -109,6 +115,8 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
     @Override
     protected void onStart() {
         super.onStart();
+
+        progressBar.setVisibility(View.VISIBLE);
 
         chatRoomList.addValueEventListener(new ValueEventListener() {
             @Override
@@ -198,6 +206,8 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
             }
         });
 
+        progressBar.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -216,7 +226,41 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
 
         if (text.equals("0")){
 
-            drRef.removeValue();
+            final AlertDialog.Builder alert = new AlertDialog.Builder(ChatListActivity.this);
+            LayoutInflater inflater = getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.info_alert, null);
+
+            final TextView textViewTitle = dialogView.findViewById(R.id.title);
+            final TextView textViewMessage = dialogView.findViewById(R.id.message);
+            final Button button_ok = dialogView.findViewById(R.id.button_ok);
+            final Button button_anuluj = dialogView.findViewById(R.id.button_anuluj);
+
+            textViewTitle.setText("Uwaga!");
+            textViewMessage.setText("Czy na pewno chcesz usunąć ten chat?");
+
+            alert.setView(dialogView);
+            final AlertDialog alertDialog = alert.create();
+            alertDialog.show();
+
+            button_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    drRef.removeValue();
+
+                    alertDialog.dismiss();
+
+                }
+            });
+
+            button_anuluj.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    alertDialog.dismiss();
+
+                }
+            });
 
         }else {
 
@@ -270,4 +314,40 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
         }
 
     }
+
+    private void isNetworkConnected(){
+
+        if (!Networking.checkConnection(this)){
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            LayoutInflater inflater = getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.info_alert, null);
+
+            final TextView textViewTitle = dialogView.findViewById(R.id.title);
+            final TextView textViewMessage = dialogView.findViewById(R.id.message);
+            final Button button_ok = dialogView.findViewById(R.id.button_ok);
+            final Button button_anuluj = dialogView.findViewById(R.id.button_anuluj);
+
+            button_anuluj.setVisibility(View.GONE);
+
+            textViewTitle.setText("Problem z Internetem!");
+            textViewMessage.setText("Nie masz połączenia! Włącz Internet i spróbuj ponownie!");
+
+            alert.setView(dialogView);
+            final AlertDialog alertDialog = alert.create();
+            alertDialog.show();
+
+            button_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    finish();
+
+                }
+            });
+
+        }
+
+    }
+
 }

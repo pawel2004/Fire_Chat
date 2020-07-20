@@ -24,4 +24,6 @@
     <string name="ok">Ok</string>
     <string name="nazwa_pokoju">Nazwa pokoju</string>
     <string name="tutaj_wpisz_wiadomo">Tutaj wpisz wiadomość</string>
+    <string name="tytu">Tytuł</string>
+    <string name="message">Wiadomość</string>
 </resources>

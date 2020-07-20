@@ -2,6 +2,7 @@ package com.example.grybos.firechat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,6 +63,8 @@ public class ChatRoomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
+
+        isNetworkConnected();
 
         getSupportActionBar().hide();
 
@@ -136,13 +140,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
             uriChatImage = data.getData(); //Zdjęcie ląduje w tym obiekcie
 
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriChatImage); //Ustawiam zdjęcie w ImageView
-                room_image.setImageBitmap(bitmap); //-||-
-                uploadImageToFirebaseStorage();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            uploadImageToFirebaseStorage();
 
         }
 
@@ -168,6 +166,8 @@ public class ChatRoomActivity extends AppCompatActivity {
 
                                     updateDatabase(chatImageUrl);
 
+                                    Glide.with(ChatRoomActivity.this).load(chatImageUrl).into(room_image);
+
                                     Log.i("URL",chatImageUrl);
                                 }
                             });
@@ -189,6 +189,41 @@ public class ChatRoomActivity extends AppCompatActivity {
         Item item = new Item(mRoomId, chatImageUrl, mRoomName);
 
         drRef.setValue(item);
+
+    }
+
+    private void isNetworkConnected(){
+
+        if (!Networking.checkConnection(this)){
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            LayoutInflater inflater = getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.info_alert, null);
+
+            final TextView textViewTitle = dialogView.findViewById(R.id.title);
+            final TextView textViewMessage = dialogView.findViewById(R.id.message);
+            final Button button_ok = dialogView.findViewById(R.id.button_ok);
+            final Button button_anuluj = dialogView.findViewById(R.id.button_anuluj);
+
+            button_anuluj.setVisibility(View.GONE);
+
+            textViewTitle.setText("Problem z Internetem!");
+            textViewMessage.setText("Nie masz połączenia! Włącz Internet i spróbuj ponownie!");
+
+            alert.setView(dialogView);
+            final AlertDialog alertDialog = alert.create();
+            alertDialog.show();
+
+            button_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    finish();
+
+                }
+            });
+
+        }
 
     }
 
