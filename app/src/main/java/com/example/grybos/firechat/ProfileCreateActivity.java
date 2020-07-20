@@ -31,6 +31,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -47,6 +49,7 @@ public class ProfileCreateActivity extends AppCompatActivity {
     private Uri uriProfileImage; //Ta zmienna reprezentuje zdjęcie profilowe
     private String profileImageUrl; //Ścieżka do zdjęcia
     private FirebaseAuth mAuth; //Obiekt do aktualizacji danych użytkownika
+    private DatabaseReference users;
 
     //widgety
     private CircularImageView profile_image;
@@ -69,6 +72,8 @@ public class ProfileCreateActivity extends AppCompatActivity {
         save = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progress_bar);
         email_ver = findViewById(R.id.email_ver);
+
+        users = FirebaseDatabase.getInstance().getReference("Users");
 
         Bundle bundle = getIntent().getExtras();
 
@@ -163,7 +168,7 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
         }
 
-        FirebaseUser user = mAuth.getCurrentUser(); //Tworzenie obiektu użytkownika
+        final FirebaseUser user = mAuth.getCurrentUser(); //Tworzenie obiektu użytkownika
 
         if (user != null && profileImageUrl != null){
 
@@ -178,6 +183,9 @@ public class ProfileCreateActivity extends AppCompatActivity {
                     if (task.isSuccessful()){
 
                         Toast.makeText(ProfileCreateActivity.this, "Profil zmieniony!", Toast.LENGTH_LONG).show();
+
+                        String id = users.push().getKey();
+                        users.child(id).setValue(new User(id, user.getDisplayName(), user.getPhotoUrl().toString()));
 
                         Intent intent = new Intent(ProfileCreateActivity.this, MainActivity.class); //Do nowego activity
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity

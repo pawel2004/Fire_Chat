@@ -14,9 +14,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,20 +28,28 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.xml.transform.Templates;
 
 import static com.example.grybos.firechat.ChatListActivity.RoomId;
 import static com.example.grybos.firechat.ChatListActivity.RoomImage;
 import static com.example.grybos.firechat.ChatListActivity.RoomName;
+import static com.example.grybos.firechat.ChatListActivity.RoomPrivate;
+import static com.example.grybos.firechat.ChatListActivity.RoomUsers;
 
 public class ChatRoomActivity extends AppCompatActivity {
 
@@ -47,12 +57,18 @@ public class ChatRoomActivity extends AppCompatActivity {
     private String mRoomName;
     private String mRoomId;
     private String mImageResource;
+    private Boolean mIsPrivate;
+    private ArrayList<User> mUsers;
     private Uri uriChatImage;
     private String chatImageUrl;
     private DatabaseReference messagesList;
+    private ArrayList<User> activeUsers;
+    private FirebaseAuth auth;
 
     //widgety
     private ImageView back;
+    private ImageView private_switch;
+    private ImageView addUsers;
     private CircularImageView room_image;
     private TextView chat_name;
     private RecyclerView recyclerView;
@@ -69,11 +85,16 @@ public class ChatRoomActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         back = findViewById(R.id.back);
+        private_switch = findViewById(R.id.private_switch);
+        addUsers = findViewById(R.id.add_users);
         room_image = findViewById(R.id.chat_picture);
         chat_name = findViewById(R.id.room_name);
         recyclerView = findViewById(R.id.recycler);
         editTextMessage = findViewById(R.id.edit_text_message);
         send = findViewById(R.id.fab);
+        auth = FirebaseAuth.getInstance();
+
+        activeUsers = new ArrayList<>();
 
         Bundle bundle = getIntent().getExtras();
 
@@ -82,10 +103,111 @@ public class ChatRoomActivity extends AppCompatActivity {
             mRoomName = bundle.getString(RoomName);
             mRoomId = bundle.getString(RoomId);
             mImageResource = bundle.getString(RoomImage);
+            mIsPrivate = bundle.getBoolean(RoomPrivate);
+            mUsers = (ArrayList<User>) bundle.get(RoomUsers);
 
         }
 
         messagesList = FirebaseDatabase.getInstance().getReference("Messages").child(mRoomId);
+
+        private_switch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DatabaseReference drRef = FirebaseDatabase.getInstance().getReference("Rooms").child(mRoomId);
+
+                if (mIsPrivate){
+
+                    mIsPrivate = false;
+
+                    private_switch.setImageResource(R.drawable.ic_visibility_black_24dp);
+                    addUsers.setVisibility(View.GONE);
+
+                    mUsers = new ArrayList<>();
+
+                    drRef.setValue(new Item(mRoomId, mImageResource, mRoomName, mIsPrivate, mUsers));
+
+                }else {
+
+                    mIsPrivate = true;
+
+                    private_switch.setImageResource(R.drawable.ic_visibility_off_black_24dp);
+                    addUsers.setVisibility(View.VISIBLE);
+
+                    drRef.setValue(new Item(mRoomId, mImageResource, mRoomName, mIsPrivate, mUsers));
+
+                }
+
+            }
+        });
+
+        addUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(ChatRoomActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.add_user_dialog, null);
+
+                final ListView listView = dialogView.findViewById(R.id.list);
+
+                users.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        activeUsers.clear();
+
+                        for (DataSnapshot usersnaphot : snapshot.getChildren()){
+
+                            activeUsers.add(usersnaphot.getValue(User.class));
+
+                        }
+
+                        ListViewAdapter adapter = new ListViewAdapter(
+                                ChatRoomActivity.this,
+                                R.layout.listview_layout,
+                                activeUsers
+                        );
+
+                        listView.setAdapter(adapter);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+                final Button button_ok = dialogView.findViewById(R.id.button_ok);
+                final Button button_anuluj = dialogView.findViewById(R.id.button_anuluj);
+
+                alert.setView(dialogView);
+                final AlertDialog alertDialog = alert.create();
+                alertDialog.show();
+
+                button_ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        alertDialog.dismiss();
+
+                    }
+                });
+
+                button_anuluj.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        alertDialog.dismiss();
+
+                    }
+                });
+
+            }
+        });
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +234,18 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onStart();
 
         loadRoomInfo();
+
+        if (mIsPrivate){
+
+            private_switch.setImageResource(R.drawable.ic_visibility_off_black_24dp);
+            addUsers.setVisibility(View.VISIBLE);
+
+        }else {
+
+            addUsers.setVisibility(View.GONE);
+            private_switch.setImageResource(R.drawable.ic_visibility_black_24dp);
+
+        }
 
     }
 
@@ -186,7 +320,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         DatabaseReference drRef = FirebaseDatabase.getInstance().getReference("Rooms").child(mRoomId);
 
-        Item item = new Item(mRoomId, chatImageUrl, mRoomName);
+        Item item = new Item(mRoomId, chatImageUrl, mRoomName, mIsPrivate, mUsers);
 
         drRef.setValue(item);
 

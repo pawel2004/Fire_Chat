@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="@dimen/margin_top_recycler"
+    android:layout_marginEnd="@dimen/margin_top_recycler"
+    android:focusable="true"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_margin="@dimen/margin_top_recycler"
+    android:background="@color/colorPrimary">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="@dimen/logo_imageView3_width"
+            android:layout_height="@dimen/logo_imageView3_height"
+            android:id="@+id/profilePicture"
+            android:layout_centerVertical="true"
+            android:src="@drawable/default_profile"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/username"
+            android:textSize="@dimen/text_size"
+            android:textColor="@color/white"
+            android:layout_toEndOf="@id/profilePicture"
+            android:paddingStart="@dimen/padding_start"
+            tools:ignore="RtlSymmetry"
+            android:id="@+id/user_name"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/checkbox"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

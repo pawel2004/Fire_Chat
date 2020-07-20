@@ -9,6 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.firebase.FirebaseApiNotAvailableException;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,12 +23,16 @@ public class EditingChatBottomSheetDialog extends BottomSheetDialogFragment {
     private String chatName;
     private String id;
     private String image_resource;
+    private Boolean isPrivate;
+    private ArrayList<User> users;
 
-    public EditingChatBottomSheetDialog(String chatName, String id , String image_resource){
+    public EditingChatBottomSheetDialog(String chatName, String id, String image_resource, Boolean isPrivate, ArrayList<User> users){
 
         this.chatName = chatName;
         this.id = id;
         this.image_resource = image_resource;
+        this.isPrivate = isPrivate;
+        this.users = users;
 
     }
 
@@ -42,7 +50,7 @@ public class EditingChatBottomSheetDialog extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
-                mListener.onViewClicked("0", id, image_resource);
+                mListener.onViewClicked("0", id, image_resource, isPrivate, users);
                 dismiss();
 
             }
@@ -54,7 +62,7 @@ public class EditingChatBottomSheetDialog extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
-                mListener.onViewClicked("1", id, image_resource);
+                mListener.onViewClicked("1", id, image_resource, isPrivate, users);
                 dismiss();
 
             }
@@ -82,7 +90,7 @@ public class EditingChatBottomSheetDialog extends BottomSheetDialogFragment {
 
     public interface EditBottomSheetListener{
 
-        void onViewClicked(String text, String id, String image_resource);
+        void onViewClicked(String text, String id, String image_resource, Boolean isPrivate, ArrayList<User> users);
 
     }
 

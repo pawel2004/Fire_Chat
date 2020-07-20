@@ -7,9 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -29,9 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ChatListActivity extends AppCompatActivity implements AddingChatBottomSheetDialog.BottomSheetListener, EditingChatBottomSheetDialog.EditBottomSheetListener {
 
@@ -54,6 +50,8 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
     public static final String RoomId = "RoomId";
     public static final String RoomImage = "RoomImage";
     public static final String RoomName = "RoomName";
+    public static final String RoomPrivate = "RoomPrivate";
+    public static final String RoomUsers = "RoomUsers";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +189,8 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
                 intent.putExtra(RoomId, item.getId());
                 intent.putExtra(RoomImage, item.getImage_resource());
                 intent.putExtra(RoomName, item.getChat_name());
+                intent.putExtra(RoomPrivate, item.getIsPrivate());
+                intent.putExtra(RoomUsers, item.getUsers());
                 startActivity(intent);
 
             }
@@ -200,7 +200,7 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
             @Override
             public void onItemLongClick(int position) {
 
-                EditingChatBottomSheetDialog bottomSheet = new EditingChatBottomSheetDialog(items.get(position).getChat_name(), items.get(position).getId(), items.get(position).getImage_resource());
+                EditingChatBottomSheetDialog bottomSheet = new EditingChatBottomSheetDialog(items.get(position).getChat_name(), items.get(position).getId(), items.get(position).getImage_resource(), items.get(position).getIsPrivate(), items.get(position).getUsers());
                 bottomSheet.show(getSupportFragmentManager(), "edycja");
 
             }
@@ -215,12 +215,13 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
 
         String id = chatRoomList.push().getKey();
         DatabaseReference tempRef = chatRoomList.child(id);
-        tempRef.setValue(new Item(id, "https://firebasestorage.googleapis.com/v0/b/fire-chat-1ce3d.appspot.com/o/ic_icon.png?alt=media&token=ff5e63a8-5f3a-4902-8c3a-feb3bf87517f", text));
+        ArrayList<User> users = new ArrayList<>();
+        tempRef.setValue(new Item(id, "https://firebasestorage.googleapis.com/v0/b/fire-chat-1ce3d.appspot.com/o/ic_icon.png?alt=media&token=ff5e63a8-5f3a-4902-8c3a-feb3bf87517f", text, false, users));
 
     }
 
     @Override
-    public void onViewClicked(String text, final String id, final String image_resource) {
+    public void onViewClicked(String text, final String id, final String image_resource, final Boolean isPrivate, final ArrayList<User> users) {
 
         final DatabaseReference drRef = chatRoomList.child(id);
 
@@ -286,7 +287,7 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
 
                     if (!name.isEmpty()){
 
-                        Item item = new Item(id, image_resource, name);
+                        Item item = new Item(id, image_resource, name, isPrivate, users);
 
                         drRef.setValue(item);
 
