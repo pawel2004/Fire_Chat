@@ -22,4 +22,6 @@
     <string name="new_name">Podaj nową nazwę</string>
     <string name="anuluj">Anuluj</string>
     <string name="ok">Ok</string>
+    <string name="nazwa_pokoju">Nazwa pokoju</string>
+    <string name="tutaj_wpisz_wiadomo">Tutaj wpisz wiadomość</string>
 </resources>
