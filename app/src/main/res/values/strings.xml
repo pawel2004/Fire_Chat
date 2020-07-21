@@ -29,4 +29,5 @@
     <string name="add_users">Dodaj użytkowników:</string>
     <string name="message_add_use">Zaznacz, aby wybrać.</string>
     <string name="username">Nazwa użytkownika</string>
+    <string name="data">Data</string>
 </resources>

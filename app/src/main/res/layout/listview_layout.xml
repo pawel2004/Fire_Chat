@@ -10,7 +10,8 @@
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:layout_margin="@dimen/margin_top_recycler"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimary"
+    android:id="@+id/listElement">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -35,13 +36,6 @@
             android:id="@+id/user_name"
             android:layout_centerVertical="true"
             android:textStyle="bold"/>
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:id="@+id/checkbox"/>
 
     </RelativeLayout>
 

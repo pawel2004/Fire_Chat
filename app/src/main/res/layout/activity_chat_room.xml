@@ -25,38 +25,11 @@
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"/>
 
-        <ImageView
-            android:layout_width="@dimen/logo_imageView3_width"
-            android:layout_height="@dimen/logo_imageView3_height"
-            android:layout_centerVertical="true"
-            android:layout_margin="4dp"
-            android:src="@drawable/ic_visibility_off_black_24dp"
-            android:scaleType="centerInside"
-            android:id="@+id/private_switch"
-            android:focusable="true"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:layout_toRightOf="@id/back"/>
-
-        <ImageView
-            android:layout_width="@dimen/logo_imageView3_width"
-            android:layout_height="@dimen/logo_imageView3_height"
-            android:layout_centerVertical="true"
-            android:layout_margin="4dp"
-            android:src="@drawable/ic_person_add_black_24dp"
-            android:scaleType="centerInside"
-            android:id="@+id/add_users"
-            android:focusable="true"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:layout_toRightOf="@id/private_switch"
-            android:visibility="gone"/>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nazwa_pokoju"
-            android:layout_toRightOf="@id/add_users"
+            android:layout_centerInParent="true"
             android:layout_centerVertical="true"
             android:id="@+id/room_name"
             android:textColor="@color/white"
@@ -85,6 +58,13 @@
         android:background="@color/white"
         android:paddingTop="10dp"
         android:scrollbars="vertical"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_bar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -43,7 +43,6 @@ public class ListViewAdapter extends ArrayAdapter {
         Glide.with(context).load(users.get(position).getImageResource()).into(profilePicture);
         TextView userName = convertView.findViewById(R.id.user_name);
         userName.setText(users.get(position).getDisplayName());
-        CheckBox checkBox = convertView.findViewById(R.id.checkbox);
 
         return convertView;
     }

@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -15,10 +17,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +46,10 @@ import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 import javax.xml.transform.Templates;
 
@@ -64,6 +72,8 @@ public class ChatRoomActivity extends AppCompatActivity {
     private DatabaseReference messagesList;
     private ArrayList<User> activeUsers;
     private FirebaseAuth auth;
+    private RecyclerView.LayoutManager layoutManager;
+    private ArrayList<Message> messages;
 
     //widgety
     private ImageView back;
@@ -74,6 +84,8 @@ public class ChatRoomActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private EditText editTextMessage;
     private FloatingActionButton send;
+    private MessageRecycler mAdapter;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,16 +97,16 @@ public class ChatRoomActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         back = findViewById(R.id.back);
-        private_switch = findViewById(R.id.private_switch);
-        addUsers = findViewById(R.id.add_users);
         room_image = findViewById(R.id.chat_picture);
         chat_name = findViewById(R.id.room_name);
         recyclerView = findViewById(R.id.recycler);
         editTextMessage = findViewById(R.id.edit_text_message);
         send = findViewById(R.id.fab);
+        progressBar = findViewById(R.id.progress_bar);
         auth = FirebaseAuth.getInstance();
 
         activeUsers = new ArrayList<>();
+        messages = new ArrayList<>();
 
         Bundle bundle = getIntent().getExtras();
 
@@ -109,105 +121,6 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
 
         messagesList = FirebaseDatabase.getInstance().getReference("Messages").child(mRoomId);
-
-        private_switch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                DatabaseReference drRef = FirebaseDatabase.getInstance().getReference("Rooms").child(mRoomId);
-
-                if (mIsPrivate){
-
-                    mIsPrivate = false;
-
-                    private_switch.setImageResource(R.drawable.ic_visibility_black_24dp);
-                    addUsers.setVisibility(View.GONE);
-
-                    mUsers = new ArrayList<>();
-
-                    drRef.setValue(new Item(mRoomId, mImageResource, mRoomName, mIsPrivate, mUsers));
-
-                }else {
-
-                    mIsPrivate = true;
-
-                    private_switch.setImageResource(R.drawable.ic_visibility_off_black_24dp);
-                    addUsers.setVisibility(View.VISIBLE);
-
-                    drRef.setValue(new Item(mRoomId, mImageResource, mRoomName, mIsPrivate, mUsers));
-
-                }
-
-            }
-        });
-
-        addUsers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(ChatRoomActivity.this);
-                LayoutInflater inflater = getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.add_user_dialog, null);
-
-                final ListView listView = dialogView.findViewById(R.id.list);
-
-                users.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                        activeUsers.clear();
-
-                        for (DataSnapshot usersnaphot : snapshot.getChildren()){
-
-                            activeUsers.add(usersnaphot.getValue(User.class));
-
-                        }
-
-                        ListViewAdapter adapter = new ListViewAdapter(
-                                ChatRoomActivity.this,
-                                R.layout.listview_layout,
-                                activeUsers
-                        );
-
-                        listView.setAdapter(adapter);
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                final Button button_ok = dialogView.findViewById(R.id.button_ok);
-                final Button button_anuluj = dialogView.findViewById(R.id.button_anuluj);
-
-                alert.setView(dialogView);
-                final AlertDialog alertDialog = alert.create();
-                alertDialog.show();
-
-                button_ok.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        alertDialog.dismiss();
-
-                    }
-                });
-
-                button_anuluj.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        alertDialog.dismiss();
-
-                    }
-                });
-
-            }
-        });
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,6 +140,63 @@ public class ChatRoomActivity extends AppCompatActivity {
             }
         });
 
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                sendMessage();
+
+            }
+        });
+
+    }
+
+    private void generateRecyclerView(){
+
+        recyclerView = findViewById(R.id.recycler);
+        layoutManager = new LinearLayoutManager(this);
+        mAdapter = new MessageRecycler(this, messages);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mAdapter);
+
+        mAdapter.setOnitemLongClickListener(new MessageRecycler.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(int position) {
+
+
+
+            }
+        });
+
+        progressBar.setVisibility(View.GONE);
+
+    }
+
+    private void sendMessage() {
+
+        String text = editTextMessage.getText().toString();
+
+        if (auth.getCurrentUser() != null){
+
+            String userName = auth.getCurrentUser().getDisplayName();
+
+            if (auth.getCurrentUser().getPhotoUrl() != null){
+
+                String userImage = auth.getCurrentUser().getPhotoUrl().toString();
+
+                long date = new Date().getTime();
+
+                String id = messagesList.push().getKey();
+
+                messagesList.child(id).setValue(new Message(id, userName, date, userImage, text));
+
+            }
+
+        }
+
+        editTextMessage.setText("");
+
     }
 
     @Override
@@ -235,17 +205,31 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         loadRoomInfo();
 
-        if (mIsPrivate){
+        progressBar.setVisibility(View.VISIBLE);
 
-            private_switch.setImageResource(R.drawable.ic_visibility_off_black_24dp);
-            addUsers.setVisibility(View.VISIBLE);
+        messagesList.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-        }else {
+                messages.clear();
 
-            addUsers.setVisibility(View.GONE);
-            private_switch.setImageResource(R.drawable.ic_visibility_black_24dp);
+                for (DataSnapshot messageSnaphot : snapshot.getChildren()){
 
-        }
+                    Message message = messageSnaphot.getValue(Message.class);
+
+                    messages.add(message);
+
+                }
+
+                generateRecyclerView();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 
