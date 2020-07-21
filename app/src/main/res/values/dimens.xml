@@ -20,7 +20,7 @@
     <dimen name="text_size3">22sp</dimen>
     <dimen name="margin_top_recycler">10dp</dimen>
     <dimen name="text_size4">18sp</dimen>
-    <dimen name="chat_bottom_bar_height">50dp</dimen>
+    <dimen name="chat_bottom_bar_height">100dp</dimen>
     <dimen name="listView_height">320dp</dimen>
 
 </resources>

@@ -59,7 +59,8 @@
             android:layout_toEndOf="@id/userPicture"
             android:layout_below="@id/user_name"
             android:paddingLeft="@dimen/padding_start"
-            android:paddingRight="@dimen/padding_start"/>
+            android:paddingRight="@dimen/padding_start"
+            android:paddingBottom="@dimen/padding_start"/>
 
 
     </RelativeLayout>

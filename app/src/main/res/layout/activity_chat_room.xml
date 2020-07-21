@@ -55,6 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/top_bar"
+        android:layout_above="@id/bottom_bar"
         android:background="@color/white"
         android:paddingTop="10dp"
         android:scrollbars="vertical"/>
@@ -69,7 +70,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/chat_bottom_bar_height"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:id="@+id/bottom_bar">
 
         <EditText
             android:layout_width="match_parent"
@@ -79,18 +82,19 @@
             android:layout_marginEnd="5dp"
             android:hint="@string/tutaj_wpisz_wiadomo"
             android:textColor="@color/black"
-            android:textColorHint="@color/black"/>
+            android:textColorHint="@color/black"
+            android:layout_alignParentBottom="true"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
             android:id="@+id/fab"
             android:src="@drawable/ic_send_black_24dp"
             android:layout_margin="5dp"
             android:background="@color/colorAccent"
-            app:fabSize="mini"/>
+            app:fabSize="mini"
+            android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
 

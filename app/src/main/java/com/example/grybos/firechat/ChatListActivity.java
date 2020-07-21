@@ -224,6 +224,8 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
     public void onViewClicked(String text, final String id, final String image_resource, final Boolean isPrivate, final ArrayList<User> users) {
 
         final DatabaseReference drRef = chatRoomList.child(id);
+        final DatabaseReference drMessages = FirebaseDatabase
+                .getInstance().getReference("Messages").child(id);
 
         if (text.equals("0")){
 
@@ -248,6 +250,8 @@ public class ChatListActivity extends AppCompatActivity implements AddingChatBot
                 public void onClick(View v) {
 
                     drRef.removeValue();
+
+                    drMessages.removeValue();
 
                     alertDialog.dismiss();
 
