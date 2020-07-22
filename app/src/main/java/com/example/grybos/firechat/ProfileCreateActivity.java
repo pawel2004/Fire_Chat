@@ -185,7 +185,7 @@ public class ProfileCreateActivity extends AppCompatActivity {
                         Toast.makeText(ProfileCreateActivity.this, "Profil zmieniony!", Toast.LENGTH_LONG).show();
 
                         String id = users.push().getKey();
-                        users.child(id).setValue(new User(id, user.getDisplayName(), user.getPhotoUrl().toString()));
+                        users.child(id).setValue(new User(id, user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail()));
 
                         Intent intent = new Intent(ProfileCreateActivity.this, MainActivity.class); //Do nowego activity
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity

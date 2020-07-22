@@ -10,7 +10,8 @@
     android:focusable="true"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:layout_margin="@dimen/margin_top_recycler">
+    android:layout_margin="@dimen/margin_top_recycler"
+    android:id="@+id/card">
 
     <RelativeLayout
         android:layout_width="match_parent"

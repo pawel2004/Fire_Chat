@@ -60,7 +60,7 @@ import static com.example.grybos.firechat.ChatListActivity.RoomName;
 import static com.example.grybos.firechat.ChatListActivity.RoomPrivate;
 import static com.example.grybos.firechat.ChatListActivity.RoomUsers;
 
-public class ChatRoomActivity extends AppCompatActivity {
+public class ChatRoomActivity extends AppCompatActivity implements EditingBottomSheetDialog2.EditBottomSheetListener {
 
     //zmienne
     private String mRoomName;
@@ -166,7 +166,8 @@ public class ChatRoomActivity extends AppCompatActivity {
             @Override
             public void onItemLongClick(int position) {
 
-
+                EditingBottomSheetDialog2 bottomSheet = new EditingBottomSheetDialog2(messages.get(position).getUserName(), messages.get(position).getId(), messages.get(position).getUserImage(), messages.get(position).getMessageDate(),  messages.get(position).getMessageText(), messages.get(position).getEmailAdress());
+                bottomSheet.show(getSupportFragmentManager(), "edycja");
 
             }
         });
@@ -183,17 +184,15 @@ public class ChatRoomActivity extends AppCompatActivity {
 
             String userName = auth.getCurrentUser().getDisplayName();
 
-            if (auth.getCurrentUser().getPhotoUrl() != null){
+            String userImage = auth.getCurrentUser().getPhotoUrl().toString();
 
-                String userImage = auth.getCurrentUser().getPhotoUrl().toString();
+            String userEmail = auth.getCurrentUser().getEmail();
 
-                long date = new Date().getTime();
+            long date = new Date().getTime();
 
-                String id = messagesList.push().getKey();
+            String id = messagesList.push().getKey();
 
-                messagesList.child(id).setValue(new Message(id, userName, date, userImage, text));
-
-            }
+            messagesList.child(id).setValue(new Message(id, userName, date, userImage, text, userEmail));
 
         }
 
@@ -347,4 +346,92 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onViewClicked(String text, final String id, final String userName, final String userImage, final long messageDate, String messageText, final String userEmail) {
+
+        final DatabaseReference drRef = messagesList.child(id);
+
+        if (text.equals("0")){
+
+            final AlertDialog.Builder alert = new AlertDialog.Builder(ChatRoomActivity.this);
+            LayoutInflater inflater = getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.info_alert, null);
+
+            final TextView textViewTitle = dialogView.findViewById(R.id.title);
+            final TextView textViewMessage = dialogView.findViewById(R.id.message);
+            final Button button_ok = dialogView.findViewById(R.id.button_ok);
+            final Button button_anuluj = dialogView.findViewById(R.id.button_anuluj);
+
+            textViewTitle.setText("Uwaga!");
+            textViewMessage.setText("Czy na pewno chcesz usunąć tę wiadomość?");
+
+            alert.setView(dialogView);
+            final AlertDialog alertDialog = alert.create();
+            alertDialog.show();
+
+            button_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    drRef.removeValue();
+
+                    alertDialog.dismiss();
+
+                }
+            });
+
+            button_anuluj.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    alertDialog.dismiss();
+
+                }
+            });
+
+        }else {
+
+            final AlertDialog.Builder alert = new AlertDialog.Builder(ChatRoomActivity.this);
+
+            LayoutInflater inflater = getLayoutInflater();
+
+            final View dialogView = inflater.inflate(R.layout.edit_message_alert, null);
+            alert.setView(dialogView);
+
+            final EditText editTextName = dialogView.findViewById(R.id.name);
+            final Button buttonOk = dialogView.findViewById(R.id.button_ok);
+            final Button buttonAnuluj = dialogView.findViewById(R.id.button_anuluj);
+
+            editTextName.setText(messageText);
+
+            final AlertDialog alertDialog = alert.create();
+            alertDialog.show();
+
+            buttonOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String name = editTextName.getText().toString();
+
+                    Message message = new Message(id, userName, messageDate, userImage, name, userEmail);
+
+                    drRef.setValue(message);
+
+                    alertDialog.dismiss();
+
+                }
+            });
+
+            buttonAnuluj.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    alertDialog.dismiss();
+
+                }
+            });
+
+        }
+
+    }
 }

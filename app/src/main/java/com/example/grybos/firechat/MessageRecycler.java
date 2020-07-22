@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MessageRecycler extends RecyclerView.Adapter<MessageRecycler.ViewHolder> {
@@ -22,6 +24,7 @@ public class MessageRecycler extends RecyclerView.Adapter<MessageRecycler.ViewHo
     private Context mContext;
     private OnItemClickListener mListener;
     private OnItemLongClickListener mListener2;
+    private FirebaseAuth auth;
 
     public interface OnItemClickListener{
 
@@ -53,6 +56,7 @@ public class MessageRecycler extends RecyclerView.Adapter<MessageRecycler.ViewHo
         public TextView mTextView2;
         public TextView mTextView3;
         public CircularImageView mCircularImageView;
+        public CardView cardView;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener listener, final OnItemLongClickListener listener2) {
             super(itemView);
@@ -61,6 +65,7 @@ public class MessageRecycler extends RecyclerView.Adapter<MessageRecycler.ViewHo
             mTextView2 = itemView.findViewById(R.id.date);
             mTextView3 = itemView.findViewById(R.id.message);
             mCircularImageView = itemView.findViewById(R.id.userPicture);
+            cardView = itemView.findViewById(R.id.card);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -108,6 +113,7 @@ public class MessageRecycler extends RecyclerView.Adapter<MessageRecycler.ViewHo
 
         mContext = context;
         mMessages = messages;
+        auth = FirebaseAuth.getInstance();
 
     }
 
@@ -119,13 +125,26 @@ public class MessageRecycler extends RecyclerView.Adapter<MessageRecycler.ViewHo
         return vh;
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "ResourceAsColor"})
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         Message currentMessage = mMessages.get(position);
 
-        holder.mTextView1.setText(currentMessage.getUserName());
+        if (auth.getCurrentUser().getEmail().equals(currentMessage.getEmailAdress())) {
+
+            holder.mTextView1.setText("Ty");
+            holder.cardView.setCardBackgroundColor(0xffff9800);
+            holder.mTextView3.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+            holder.mCircularImageView.setVisibility(View.GONE);
+
+        }
+        else {
+
+            holder.mTextView1.setText(currentMessage.getUserName());
+            Glide.with(mContext).load(currentMessage.getUserImage()).into(holder.mCircularImageView);
+
+        }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
@@ -133,7 +152,6 @@ public class MessageRecycler extends RecyclerView.Adapter<MessageRecycler.ViewHo
 
         holder.mTextView2.setText(date);
         holder.mTextView3.setText(currentMessage.getMessageText());
-        Glide.with(mContext).load(currentMessage.getUserImage()).into(holder.mCircularImageView);
 
     }
 
