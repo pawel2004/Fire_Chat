@@ -24,8 +24,9 @@ public class EditingBottomSheetDialog2 extends BottomSheetDialogFragment {
     private String userImage;
     private String messageText;
     private String emailAdress;
+    private String userId;
 
-    public EditingBottomSheetDialog2(String userName, String id, String userImage, long messageDate, String messageText, String emailAdress){
+    public EditingBottomSheetDialog2(String userName, String id, String userImage, long messageDate, String messageText, String emailAdress, String userId){
 
         this.id = id;
         this.userName = userName;
@@ -33,6 +34,7 @@ public class EditingBottomSheetDialog2 extends BottomSheetDialogFragment {
         this.userImage = userImage;
         this.messageText = messageText;
         this.emailAdress = emailAdress;
+        this.userId = userId;
 
     }
 
@@ -49,7 +51,7 @@ public class EditingBottomSheetDialog2 extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
-                mListener.onViewClicked("0", id, userName, userImage, messageDate, messageText, emailAdress);
+                mListener.onViewClicked("0", id, userName, userImage, messageDate, messageText, emailAdress, userId);
                 dismiss();
 
             }
@@ -61,7 +63,7 @@ public class EditingBottomSheetDialog2 extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
-                mListener.onViewClicked("1", id, userName, userImage, messageDate, messageText, emailAdress);
+                mListener.onViewClicked("1", id, userName, userImage, messageDate, messageText, emailAdress, userId);
                 dismiss();
 
             }
@@ -89,7 +91,7 @@ public class EditingBottomSheetDialog2 extends BottomSheetDialogFragment {
 
     public interface EditBottomSheetListener{
 
-        void onViewClicked(String text, String id, String userName, String userImage, long messageDate, String messageText, String userEmail);
+        void onViewClicked(String text, String id, String userName, String userImage, long messageDate, String messageText, String userEmail, String userId);
 
     }
 

@@ -1,5 +1,8 @@
 package com.example.grybos.firechat;
 
+import com.google.firebase.auth.FirebaseUser;
+
+import java.io.Serializable;
 import java.util.Date;
 
 public class Message{
@@ -10,16 +13,18 @@ public class Message{
     private String userImage;
     private String messageText;
     private String emailAdress;
+    private String userId;
 
     public Message(){}
 
-    public Message(String id, String userName, Long messageDate, String userImage, String messageText, String emailAdress) {
+    public Message(String id, String userName, Long messageDate, String userImage, String messageText, String emailAdress, String userId) {
         this.id = id;
         this.userName = userName;
         this.messageDate = messageDate;
         this.userImage = userImage;
         this.messageText = messageText;
         this.emailAdress = emailAdress;
+        this.userId = userId;
     }
 
     public String getId() {
@@ -45,4 +50,7 @@ public class Message{
     }
 
     public String getEmailAdress(){return emailAdress;}
+
+    public String getUserId(){return userId;}
+
 }

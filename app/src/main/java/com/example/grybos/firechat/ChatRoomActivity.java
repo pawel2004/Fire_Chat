@@ -47,6 +47,7 @@ import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,6 +76,7 @@ public class ChatRoomActivity extends AppCompatActivity implements EditingBottom
     private FirebaseAuth auth;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<Message> messages;
+    private DatabaseReference users;
 
     //widgety
     private ImageView back;
@@ -109,6 +111,8 @@ public class ChatRoomActivity extends AppCompatActivity implements EditingBottom
 
         activeUsers = new ArrayList<>();
         messages = new ArrayList<>();
+
+        users = FirebaseDatabase.getInstance().getReference("Users");
 
         Bundle bundle = getIntent().getExtras();
 
@@ -166,7 +170,7 @@ public class ChatRoomActivity extends AppCompatActivity implements EditingBottom
             @Override
             public void onItemLongClick(int position) {
 
-                EditingBottomSheetDialog2 bottomSheet = new EditingBottomSheetDialog2(messages.get(position).getUserName(), messages.get(position).getId(), messages.get(position).getUserImage(), messages.get(position).getMessageDate(),  messages.get(position).getMessageText(), messages.get(position).getEmailAdress());
+                EditingBottomSheetDialog2 bottomSheet = new EditingBottomSheetDialog2(messages.get(position).getUserName(), messages.get(position).getId(), messages.get(position).getUserImage(), messages.get(position).getMessageDate(),  messages.get(position).getMessageText(), messages.get(position).getEmailAdress(), messages.get(position).getUserId());
                 bottomSheet.show(getSupportFragmentManager(), "edycja");
 
             }
@@ -178,21 +182,45 @@ public class ChatRoomActivity extends AppCompatActivity implements EditingBottom
 
     private void sendMessage() {
 
-        String text = editTextMessage.getText().toString();
+        final String text = editTextMessage.getText().toString();
 
         if (auth.getCurrentUser() != null){
 
-            String userName = auth.getCurrentUser().getDisplayName();
+            final String userName = auth.getCurrentUser().getDisplayName();
 
-            String userImage = auth.getCurrentUser().getPhotoUrl().toString();
+            final String userImage = auth.getCurrentUser().getPhotoUrl().toString();
 
-            String userEmail = auth.getCurrentUser().getEmail();
+            final String userEmail = auth.getCurrentUser().getEmail();
 
-            long date = new Date().getTime();
+            final long date = new Date().getTime();
 
-            String id = messagesList.push().getKey();
+            users.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-            messagesList.child(id).setValue(new Message(id, userName, date, userImage, text, userEmail));
+                    for (DataSnapshot userSnapshot : snapshot.getChildren()){
+
+                        User user = userSnapshot.getValue(User.class);
+
+                        if (user.getEmailAdress().equals(auth.getCurrentUser().getEmail())){
+
+                            String userId = user.getId();
+
+                            String id = messagesList.push().getKey();
+
+                            messagesList.child(id).setValue(new Message(id, userName, date, userImage, text, userEmail, userId));
+
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
 
         }
 
@@ -347,7 +375,7 @@ public class ChatRoomActivity extends AppCompatActivity implements EditingBottom
     }
 
     @Override
-    public void onViewClicked(String text, final String id, final String userName, final String userImage, final long messageDate, String messageText, final String userEmail) {
+    public void onViewClicked(String text, final String id, final String userName, final String userImage, final long messageDate, String messageText, final String userEmail, final String userId) {
 
         final DatabaseReference drRef = messagesList.child(id);
 
@@ -413,7 +441,7 @@ public class ChatRoomActivity extends AppCompatActivity implements EditingBottom
 
                     String name = editTextName.getText().toString();
 
-                    Message message = new Message(id, userName, messageDate, userImage, name, userEmail);
+                    Message message = new Message(id, userName, messageDate, userImage, name, userEmail, userId);
 
                     drRef.setValue(message);
 

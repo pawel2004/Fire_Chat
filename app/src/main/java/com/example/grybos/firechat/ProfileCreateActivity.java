@@ -31,8 +31,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -50,13 +53,14 @@ public class ProfileCreateActivity extends AppCompatActivity {
     private String profileImageUrl; //Ścieżka do zdjęcia
     private FirebaseAuth mAuth; //Obiekt do aktualizacji danych użytkownika
     private DatabaseReference users;
+    private Bundle bundle;
+    private String userId;
 
     //widgety
     private CircularImageView profile_image;
     private EditText name;
     private Button save;
     private ProgressBar progressBar;
-    private TextView email_ver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +75,10 @@ public class ProfileCreateActivity extends AppCompatActivity {
         name = findViewById(R.id.name);
         save = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progress_bar);
-        email_ver = findViewById(R.id.email_ver);
 
         users = FirebaseDatabase.getInstance().getReference("Users");
 
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
 
         mAuth = FirebaseAuth.getInstance(); //Inicjalizacja menadżera użytkowników
 
@@ -118,17 +121,6 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
         name.setText(user.getDisplayName());
 
-        if (user.isEmailVerified()){ //Sprawdzam, czy użytkownik ma zweryfikowany email
-
-            email_ver.setText("Email jest zweryfikowany");
-
-        }
-        else {
-
-            email_ver.setText("Email jest niezweryfikowany");
-
-        }
-
     }
 
     @Override
@@ -136,23 +128,6 @@ public class ProfileCreateActivity extends AppCompatActivity {
         super.onStart();
 
         FirebaseUser user = mAuth.getCurrentUser();
-
-        if (user != null){
-
-            if (!user.isEmailVerified()){ //Jeżeli użytkownik nie ma zweryfikowanego emaila
-
-                user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() { //Wyślij email
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-
-                        Toast.makeText(ProfileCreateActivity.this, "Verification email sent", Toast.LENGTH_LONG).show();
-
-                    }
-                });
-
-            }
-
-        }
 
     }
 
@@ -184,8 +159,43 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
                         Toast.makeText(ProfileCreateActivity.this, "Profil zmieniony!", Toast.LENGTH_LONG).show();
 
-                        String id = users.push().getKey();
-                        users.child(id).setValue(new User(id, user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail()));
+                        if (bundle.getInt("key") == 1){
+
+                            users.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                    for (DataSnapshot userSnapshot : snapshot.getChildren()){
+
+                                        User usertmp = userSnapshot.getValue(User.class);
+
+                                        if (usertmp.getEmailAdress().equals(mAuth.getCurrentUser().getEmail())){
+
+                                            userId = usertmp.getId();
+
+                                            users.child(userId).setValue(new User(userId, user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail()));
+
+                                        }
+
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                        }
+                        else {
+
+                            String id = users.push().getKey();
+                            users.child(id).setValue(new User(id, user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail()));
+
+                        }
+
+                        Log.d("xxx", "0");
 
                         Intent intent = new Intent(ProfileCreateActivity.this, MainActivity.class); //Do nowego activity
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
@@ -215,6 +225,44 @@ public class ProfileCreateActivity extends AppCompatActivity {
 
                             Toast.makeText(ProfileCreateActivity.this, "Profil zmieniony!", Toast.LENGTH_LONG).show();
 
+                            if (bundle.getInt("key") == 1){
+
+                                users.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                        for (DataSnapshot userSnapshot : snapshot.getChildren()){
+
+                                            User usertmp = userSnapshot.getValue(User.class);
+
+                                            if (usertmp.getEmailAdress().equals(mAuth.getCurrentUser().getEmail())){
+
+                                                userId = usertmp.getId();
+
+                                                users.child(userId).setValue(new User(userId, user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail()));
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
+                            }
+                            else {
+
+                                String id = users.push().getKey();
+                                users.child(id).setValue(new User(id, user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail()));
+
+                            }
+
+                            Log.d("xxx", "1");
+
                             Intent intent = new Intent(ProfileCreateActivity.this, MainActivity.class); //Do nowego activity
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
                             startActivity(intent);
@@ -240,6 +288,44 @@ public class ProfileCreateActivity extends AppCompatActivity {
                         if (task.isSuccessful()){
 
                             Toast.makeText(ProfileCreateActivity.this, "Profil zmieniony!", Toast.LENGTH_LONG).show();
+
+                            if (bundle.getInt("key") == 1){
+
+                                users.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                        for (DataSnapshot userSnapshot : snapshot.getChildren()){
+
+                                            User usertmp = userSnapshot.getValue(User.class);
+
+                                            if (usertmp.getEmailAdress().equals(mAuth.getCurrentUser().getEmail())){
+
+                                                userId = usertmp.getId();
+
+                                                users.child(userId).setValue(new User(userId, user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail()));
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
+                            }
+                            else {
+
+                                String id = users.push().getKey();
+                                users.child(id).setValue(new User(id, user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail()));
+
+                            }
+
+                            Log.d("xxx", "2");
 
                             Intent intent = new Intent(ProfileCreateActivity.this, MainActivity.class); //Do nowego activity
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Czyści poprzednie activity
